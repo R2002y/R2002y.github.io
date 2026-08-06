@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>初中数学知识路线图</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Microsoft YaHei",sans-serif;background:#f5f5f5;color:#333;min-height:100vh}
+
+.top-bar{background:#fff;padding:16px 28px;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.top-bar h1{font-size:20px;font-weight:700;color:#1a1a1a}
+.top-bar .subtitle{font-size:12px;color:#888}
+.progress-wrap{display:flex;align-items:center;gap:10px}
+.progress-bar{width:160px;height:7px;background:#e5e5e5;border-radius:4px;overflow:hidden}
+.progress-bar .fill{height:100%;background:#4f46e5;border-radius:4px;transition:width .3s}
+.progress-text{font-size:12px;color:#666;white-space:nowrap}
+
+.layout{display:flex;max-width:1300px;margin:0 auto}
+.sidebar{width:240px;min-width:240px;background:#fff;border-right:1px solid #e5e5e5;padding:16px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+
+.sem-nav{display:flex;flex-wrap:wrap;gap:4px;padding:0 12px;margin-bottom:12px}
+.sem-nav .sem-btn{padding:5px 10px;border:1px solid #e0e0e0;background:#fff;border-radius:14px;font-size:12px;color:#666;cursor:pointer;transition:all .15s}
+.sem-nav .sem-btn:hover{background:#f0efff;border-color:#c7c3f0;color:#4f46e5}
+.sem-nav .sem-btn.active{background:#4f46e5;border-color:#4f46e5;color:#fff;font-weight:600}
+
+.tree{padding:0 8px}
+.chapter-node{margin-bottom:2px}
+.chapter-toggle{display:flex;align-items:center;gap:6px;width:100%;padding:8px 12px;border:none;background:none;font-size:13px;font-weight:600;color:#333;cursor:pointer;border-radius:6px;text-align:left}
+.chapter-toggle:hover{background:#f8f7ff}
+.chapter-toggle .arrow{font-size:10px;transition:transform .2s;color:#999;width:14px;text-align:center;flex-shrink:0}
+.chapter-toggle .arrow.open{transform:rotate(90deg)}
+.chapter-toggle .ch-icon{margin-right:2px}
+.sections-list{overflow:hidden;transition:max-height .3s;max-height:0}
+.sections-list.open{max-height:2000px}
+.section-link{display:block;padding:6px 12px 6px 36px;font-size:12px;color:#666;text-decoration:none;border-radius:4px;cursor:pointer;transition:all .12s;border-left:2px solid transparent;margin-left:12px}
+.section-link:hover{background:#f0efff;color:#4f46e5}
+.section-link.active{background:#f0efff;color:#4f46e5;font-weight:600;border-left-color:#4f46e5}
+
+.divider{border:none;border-top:1px solid #eee;margin:8px 12px}
+
+.main{flex:1;padding:24px 28px;min-width:0}
+.semester-header{margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #4f46e5}
+.semester-header h2{font-size:19px;color:#1a1a1a;margin-bottom:4px}
+.semester-header .map{font-size:12px;color:#888;line-height:1.6}
+
+.chapter-block{margin-bottom:20px}
+.chapter-block-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:8px 16px;background:#eef2ff;border-radius:8px}
+.chapter-block-header h3{font-size:15px;color:#3730a3;font-weight:700}
+.chapter-block-header .ch-num{font-size:11px;color:#6d67e4;background:#fff;padding:2px 8px;border-radius:10px;margin-left:auto}
+
+.section-card{background:#fff;border-radius:10px;padding:20px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.05);border:1px solid #eee;scroll-margin-top:16px}
+.section-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.section-card-top h4{font-size:15px;color:#1a1a1a}
+.section-card .tag{font-size:11px;background:#f0efff;color:#4f46e5;padding:2px 8px;border-radius:10px}
+.one-liner{background:#fefce8;border-left:3px solid #f59e0b;padding:8px 12px;border-radius:0 6px 6px 0;font-size:13px;color:#555;margin-bottom:12px}
+.one-liner strong{color:#b45309}
+.concept-table{width:100%;border-collapse:collapse;margin-bottom:10px;font-size:13px}
+.concept-table th{background:#f9fafb;padding:6px 10px;text-align:left;font-weight:600;color:#666;border-bottom:2px solid #e5e5e5;font-size:12px}
+.concept-table td{padding:6px 10px;border-bottom:1px solid #f0f0f0;color:#444}
+.concept-table td:first-child{white-space:nowrap;font-weight:500;color:#333;width:100px}
+.prereq{font-size:12px;color:#888;margin-bottom:12px;padding:4px 8px;background:#f9fafb;border-radius:4px;display:inline-block}
+.questions{border-top:1px solid #eee;padding-top:12px}
+.questions h5{font-size:13px;color:#333;margin-bottom:8px}
+.question-item{margin-bottom:10px}
+.question-item .q{font-size:13px;color:#333;margin-bottom:3px;background:#f9fafb;padding:6px 10px;border-radius:6px}
+.question-item .a-toggle{font-size:11px;color:#4f46e5;background:none;border:none;cursor:pointer;padding:1px 0;display:inline-flex;align-items:center;gap:3px}
+.question-item .a-toggle:hover{color:#3730a3;text-decoration:underline}
+.question-item .a-toggle .arrow{display:inline-block;transition:transform .2s;font-size:9px}
+.question-item .a-toggle.open .arrow{transform:rotate(90deg)}
+.question-item .answer{display:none;margin-top:4px;padding:6px 10px;background:#f0fdf4;border-left:3px solid #22c55e;border-radius:0 4px 4px 0;font-size:13px;color:#166534;font-family:"Consolas","Courier New",monospace;white-space:pre-wrap;word-break:break-all}
+.question-item .answer.show{display:block}
+.section-footer{margin-top:8px;display:flex;align-items:center}
+.section-footer label{font-size:12px;color:#888;cursor:pointer;display:flex;align-items:center;gap:5px}
+.section-footer input[type=checkbox]{width:14px;height:14px;accent-color:#4f46e5;cursor:pointer}
+
+@keyframes highlight{0%{background:#fef3c7}100%{background:transparent}}
+.section-card.highlight{animation:highlight 1.5s ease-out}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div>
+    <h1>📐 初中数学知识路线图</h1>
+    <div class="subtitle">人教版 · 按章按节 · 用大白话重新学一遍</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="fill" id="progressFill" style="width:0%"></div></div>
+    <span class="progress-text" id="progressText">0 / 0 节已学</span>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar" id="sidebar">
+    <div class="sem-nav" id="semNav"></div>
+    <div class="tree" id="tree"></div>
+  </div>
+  <div class="main" id="main"></div>
+</div>
+
+<script>
+// ==================== DATA ====================
+const DATA = {
+s71:{title:'初一上',map:'有理数 → 整式的加减 → 一元一次方程 → 几何图形初步',chapters:[
+{id:'s71c1',title:'第一章 有理数',sections:[
+{id:'s71c1s1',title:'1.1 正数和负数',oneliner:'<strong>零是分界线，往上正往下负。</strong>负数不是"没有"，是"相反方向"。',prereq:'小学数学四则运算',concepts:[['正数和负数','大于0为正，小于0为负。0既不是正数也不是负数'],['数轴','一条直线，中间是0，右边正左边负'],['相反数','到原点距离相等但方向相反，3和-3']],questions:[{q:'-5是负数吗？它的相反数是多少？',a:'是负数，相反数是 5'},{q:'数轴上，-3 在 0 的哪一边？',a:'0 的左边'}]},
+{id:'s71c1s2',title:'1.2 有理数',oneliner:'<strong>能写成分数 a/b（b≠0）的数都是有理数。</strong>整数、小数、分数，通通在这个圈里。',prereq:'正数和负数',concepts:[['有理数定义','能表示成分数 a/b（b≠0）的数'],['分类','有理数 = 整数（正/0/负）+ 分数（正/负）'],['数轴表示','每个有理数对应数轴上唯一一个点']],questions:[{q:'0、-3、0.5、√2 中哪个不是有理数？',a:'√2 不是有理数（无限不循环小数）'},{q:'-4/2 是有理数吗？',a:'是，=-2，是整数也是有理数'}]},
+{id:'s71c1s3',title:'1.3 有理数的加减法',oneliner:'<strong>同号相加取同号，异号相加取大号。</strong>减法就是加上相反数。',prereq:'有理数概念',concepts:[['加法法则','同号：符号不变，绝对值相加。异号：取绝对值大者的符号，绝对值相减'],['减法法则','减去一个数 = 加上它的相反数。a - b = a + (-b)'],['运算律','加法交换律 a+b=b+a，结合律 (a+b)+c=a+(b+c)']],questions:[{q:'计算：(-3) + 8 - (-5) + (-2)',a:'= (-3)+8+5+(-2) = 8'},{q:'(-7) - (-4) = ?',a:'= (-7) + 4 = -3'}]},
+{id:'s71c1s4',title:'1.4 有理数的乘除法',oneliner:'<strong>同号得正，异号得负。</strong>除法就是乘以倒数。',prereq:'有理数加减法',concepts:[['乘法法则','同号得正，异号得负，绝对值相乘'],['除法法则','除以一个非零数 = 乘以它的倒数'],['倒数','乘积为1的两个数互为倒数。0没有倒数']],questions:[{q:'(-12) ÷ 4 × (-3) = ?',a:'= (-3) × (-3) = 9'},{q:'(-6) × (-2) × (-1) = ?',a:'= 12 × (-1) = -12'}]},
+{id:'s71c1s5',title:'1.5 有理数的乘方',oneliner:'<strong>aⁿ 就是 n 个 a 连乘。</strong>负数的偶次方为正，奇次方为负。',prereq:'有理数乘除法',concepts:[['乘方定义','aⁿ = n个a相乘。a叫底数，n叫指数'],['符号规律','正数的任何次方都是正；负数的偶次方为正，奇次方为负'],['科学记数法','a×10ⁿ（1≤|a|<10）。12万=1.2×10⁵'],['混合运算','先乘方，再乘除，最后加减。有括号先算括号']],questions:[{q:'(-2)³ = ?',a:'= (-2)×(-2)×(-2) = -8'},{q:'用科学记数法表示：3 亿 5 千万',a:'3.5 × 10⁸（3.5亿=350000000）'}]}
+]},
+{id:'s71c2',title:'第二章 整式的加减',sections:[
+{id:'s71c2s1',title:'2.1 整式',oneliner:'<strong>用字母代替未知数来运算。</strong>单项式和多项式统称整式。',prereq:'有理数运算',concepts:[['单项式','数 × 字母的乘积，如 3x、-5a²b'],['多项式','几个单项式的和，如 3x²+2x-1'],['系数与次数','单项式中数字因数叫系数，所有字母指数和叫次数']],questions:[{q:'单项式 -3x²y 的系数和次数？',a:'系数=-3，次数=2+1=3'},{q:'多项式 2x³ - x + 4 是几次几项式？',a:'三次三项式'}]},
+{id:'s71c2s2',title:'2.2 整式的加减',oneliner:'<strong>同类项才能合并，系数相加字母不变。</strong>去括号时注意括号前的符号。',prereq:'整式概念',concepts:[['同类项','字母部分完全相同的项。3x² 和 -x² 是同类项，3x² 和 3x 不是'],['合并同类项','系数相加减，字母部分不变。5a-2a=3a'],['去括号','括号前是+直接去；括号前是-里面全变号。(x+1)=x+1，-(x+1)=-x-1']],questions:[{q:'合并同类项：3a+2b-a+5b',a:'= 2a + 7b'},{q:'化简：2(x-3)-3(x+1)',a:'= 2x-6-3x-3 = -x-9'}]}
+]},
+{id:'s71c3',title:'第三章 一元一次方程',sections:[
+{id:'s71c3s1',title:'3.1 从算式到方程',oneliner:'<strong>含有未知数的等式叫方程。</strong>等式两边做同样操作，等式依然成立。',prereq:'整式的加减',concepts:[['方程','含有未知数的等式。如 2x+1=5'],['方程的解','使等式成立的未知数的值'],['等式性质','①两边同加同减同一数，等式仍成立；②两边同乘同除同一非零数，等式仍成立']],questions:[{q:'检验 x=3 是不是 2x-1=5 的解',a:'左=2×3-1=5=右，是解'}]},
+{id:'s71c3s2',title:'3.2 解一元一次方程（一）——合并同类项与移项',oneliner:'<strong>把含 x 的放一边，常数放另一边。</strong>移项的核心：过等号要变号。',prereq:'等式性质',concepts:[['移项','把方程一边的项移到另一边，必须变号。x+3=7→x=7-3'],['合并同类项','把同类项合并简化方程'],['基本解法','移项→合并→系数化为1'],['列方程','设未知数→找等量关系→列方程→解→答']],questions:[{q:'解方程：3x-7=2x+5',a:'3x-2x=5+7→x=12'},{q:'小明买3支笔和2个本子花19元，笔3元/支，本子多少钱？',a:'设本子x元：3×3+2x=19→2x=10→x=5元'}]},
+{id:'s71c3s3',title:'3.3 解一元一次方程（二）——去括号与去分母',oneliner:'<strong>有括号先去括号，有分母两边同乘公分母。</strong>这是解复杂方程的必备技巧。',prereq:'移项法解方程',concepts:[['去括号','括号前是-号，去括号后里面全变号'],['去分母','方程两边同乘各分母的最小公倍数（LCM）'],['完整步骤','去分母→去括号→移项→合并同类项→系数化为1→检验']],questions:[{q:'解方程：2(x+1)/3=4',a:'两边×3→2(x+1)=12→2x+2=12→x=5'},{q:'去分母会对解产生影响吗？',a:'去分母后x的范围不变（两边同乘非零数），解不变'}]},
+{id:'s71c3s4',title:'3.4 实际问题与一元一次方程',oneliner:'<strong>把生活中的问题翻译成方程，解出来的答案要回到生活中检验。</strong>',prereq:'解一元一次方程',concepts:[['行程问题','路程=速度×时间。相遇：总路程=两者路程和'],['工程问题','工作量=工效×时间。合作：各自工作量相加'],['利润问题','利润=售价-进价。利润率=利润÷进价'],['解题步骤','审题→设未知数→找等量关系→列方程→解方程→检验并答']],questions:[{q:'甲乙相距300km，甲车60km/h，乙车40km/h相向而行，几小时相遇？',a:'设x小时：60x+40x=300→100x=300→x=3小时'},{q:'一件商品进价80元，想赚25%利润，售价？',a:'售价=80×(1+25%)=80×1.25=100元'}]}
+]},
+{id:'s71c4',title:'第四章 几何图形初步',sections:[
+{id:'s71c4s1',title:'4.1 几何图形',oneliner:'<strong>从具体物体抽象出点、线、面、体。</strong>立体图形的平面展开图是空间想象力的起点。',prereq:'生活常识',concepts:[['点线面体','点动成线，线动成面，面动成体'],['立体图形','柱体（圆柱、棱柱）、锥体（圆锥、棱锥）、球体'],['展开图','正方体展开有11种（141型、231型、222型、33型），田字型不能折叠']],questions:[{q:'正方体有几条棱？几个面？几个顶点？',a:'12条棱、6个面、8个顶点'},{q:'哪种不可能是正方体展开图？A.141型 B.田字型 C.231型',a:'B。田字型无法折叠成立方体'}]},
+{id:'s71c4s2',title:'4.2 直线、射线、线段',oneliner:'<strong>直线无限长，射线一头限，线段两头限。</strong>两点之间线段最短。',prereq:'几何图形',concepts:[['直线','无端点，无限延伸。过两点有且只有一条直线'],['射线','一个端点，向一方无限延伸'],['线段','两个端点，长度确定。两点间线段最短'],['线段中点','把线段平分为两段相等的点']],questions:[{q:'平面内4个点，任意三点不共线，能连多少条线段？',a:'4×3÷2 = 6 条'},{q:'AB=8cm，C是AB中点，AC=?',a:'4cm'}]},
+{id:'s71c4s3',title:'4.3 角',oneliner:'<strong>两条射线共用一个端点，就形成了角。</strong>角的度量、比较、计算是几何基础。',prereq:'直线射线线段',concepts:[['角的定义','两射线共端点。1周角=360°，1平角=180°，1直角=90°'],['角的单位','1°=60′，1′=60″'],['余角','和为90°的两角互余；和为180°的两角互补'],['角平分线','从一个角的顶点引出，把角平分为两等份的射线']],questions:[{q:'一个角的补角是它的3倍，求这个角',a:'180°-x=3x→4x=180°→x=45°'},{q:'35°的余角是多少度？',a:'90°-35°=55°'}]}
+]}
+]},
+
+s72:{title:'初一下',map:'相交线与平行线 → 实数 → 平面直角坐标系 → 二元一次方程组 → 不等式与不等式组 → 数据的收集整理与描述',chapters:[
+{id:'s72c1',title:'第五章 相交线与平行线',sections:[
+{id:'s72c1s1',title:'5.1 相交线',oneliner:'<strong>两直线相交产生四个角，对顶角相等，邻补角互补。</strong>垂线是夹角90°的特殊情况。',prereq:'角的概念（初一上第四章）',concepts:[['对顶角','两直线相交，相对的两个角相等'],['邻补角','相邻的两角互补（和=180°）'],['垂线','夹角为90°的两条直线互相垂直。过一点有且只有一条直线与已知直线垂直'],['垂线段','一点到直线的垂线段最短']],questions:[{q:'两直线相交，一个角70°，其余三个角？',a:'对顶角70°，两邻补角各110°'},{q:'点到直线的距离指什么？',a:'该点到直线的垂线段的长度'}]},
+{id:'s72c1s2',title:'5.2 平行线及其判定',oneliner:'<strong>同一平面内永不相交的两条直线叫平行线。</strong>用同位角、内错角、同旁内角来判定。',prereq:'相交线',concepts:[['平行线','同一平面内永不相交的两条直线。记作 a∥b'],['平行公理','过直线外一点，有且仅有一条直线与之平行'],['同位角','两线被第三条线所截，位置相同的角。同位角相等⇔两线平行'],['内错角','两线之间、截线两侧。内错角相等⇔两线平行'],['同旁内角','两线之间、截线同侧。同旁内角互补⇔两线平行']],questions:[{q:'∠1和∠2是同位角且相等，能推出什么？',a:'两直线平行'},{q:'平行线判定有几种方法？',a:'三种：同位角相等、内错角相等、同旁内角互补'}]},
+{id:'s72c1s3',title:'5.3 平行线的性质',oneliner:'<strong>两直线平行，则同位角相等、内错角相等、同旁内角互补。</strong>判定和性质是对称的。',prereq:'平行线判定',concepts:[['性质1','两直线平行→同位角相等'],['性质2','两直线平行→内错角相等'],['性质3','两直线平行→同旁内角互补（和=180°）'],['命题','判断一件事情的语句。如果条件+那么结论']],questions:[{q:'a∥b，∠1=110°，内错角∠2=?',a:'∠2=110°（内错角相等）'},{q:'a∥b，∠1=70°，同旁内角∠2=?',a:'∠2=180°-70°=110°'}]},
+{id:'s72c1s4',title:'5.4 平移',oneliner:'<strong>图形沿某方向移动一定距离，形状大小不变。</strong>平移前后对应点连线平行且相等。',prereq:'平行线',concepts:[['平移定义','图形沿某方向移动一定距离，对应点连线平行（或共线）且相等'],['平移性质','平移前后图形全等。对应线段平行且相等，对应角相等'],['平移作图','确定方向和距离，每个点沿方向平移相同距离']],questions:[{q:'平移会改变图形的大小吗？',a:'不会。平移是全等变换'},{q:'正方形向右平移5格，每个点移动了多少？',a:'每个点都移动了5格'}]}
+]},
+{id:'s72c2',title:'第六章 实数',sections:[
+{id:'s72c2s1',title:'6.1 平方根',oneliner:'<strong>x²=a，x就是a的平方根。</strong>正数有两个平方根（一正一负），0只有一个。',prereq:'有理数、乘方',concepts:[['平方根','若x²=a，x是a的平方根。±3是9的平方根'],['算术平方根','平方根中的正数，√9=3。0的算术平方根是0'],['开平方','求平方根的运算，和平方互为逆运算'],['√a²','√a² = |a|，注意绝对值陷阱！']],questions:[{q:'√81 = ?',a:'9（算术平方根）'},{q:'9的平方根是？',a:'±3（平方根有两个）'}]},
+{id:'s72c2s2',title:'6.2 立方根',oneliner:'<strong>x³=a，x是a的立方根。</strong>每个实数有且只有一个立方根，符号跟原数一致。',prereq:'平方根',concepts:[['立方根','若x³=a，x是a的立方根。³√8=2，³√-8=-2'],['平方根vs立方根','正数有两个平方根，但只有一个立方根。负数没有平方根，但有立方根']],questions:[{q:'³√-27=?',a:'-3（(-3)³=-27）'},{q:'³√64=?',a:'4（4³=64）'}]},
+{id:'s72c2s3',title:'6.3 实数',oneliner:'<strong>实数 = 有理数 + 无理数，填满了整个数轴。</strong>√2、π终于有了正式的身份。',prereq:'平方根、立方根',concepts:[['无理数','无限不循环小数：√2、π、0.1010010001…'],['实数分类','实数 = 有理数（整数+分数）+ 无理数'],['实数和数轴','数轴上每个点对应唯一实数，一一对应'],['实数运算','加减乘除和有理数规则一致。|a| 同样适用']],questions:[{q:'√2、0、-3、π、0.333…中哪些是有理数？',a:'0、-3、0.333…（循环小数是有理数）'},{q:'估算√50在哪两个连续整数之间',a:'7²=49<50<8²=64，在7和8之间'}]}
+]},
+{id:'s72c3',title:'第七章 平面直角坐标系',sections:[
+{id:'s72c3s1',title:'7.1 平面直角坐标系',oneliner:'<strong>用(x,y)精确标定平面上任何一个点。</strong>这是数形结合的起点——后面所有函数图像都靠它。',prereq:'数轴、实数',concepts:[['坐标轴','水平x轴+垂直y轴，交于原点(0,0)'],['点的坐标','(x,y)，x=横坐标，y=纵坐标'],['四个象限','一(+,+)二(-,+)三(-,-)四(+,-)。坐标轴上的点不属于任何象限'],['距离','到x轴距离=|y|，到y轴距离=|x|']],questions:[{q:'点A(3,-2)在第几象限？',a:'第四象限（x正y负）'},{q:'点(0,-5)在哪个象限？',a:'不在任何象限，在y轴负半轴上'}]},
+{id:'s72c3s2',title:'7.2 坐标方法的简单应用',oneliner:'<strong>平移改坐标，对称变符号。</strong>用坐标描述位置变化，是GPS的原理。',prereq:'坐标系概念',concepts:[['平移','左右平移改x，上下平移改y。右+左-，上+下-'],['对称','关于x轴对称→y变号；关于y轴对称→x变号；关于原点对称→x、y都变号'],['方位','用方位角和距离确定位置（极坐标雏形）']],questions:[{q:'点(5,2)向左平移3个单位后的坐标？',a:'(2,2)'},{q:'点(-4,3)关于x轴的对称点是？',a:'(-4,-3)'}]}
+]},
+{id:'s72c4',title:'第八章 二元一次方程组',sections:[
+{id:'s72c4s1',title:'8.1 二元一次方程（组）',oneliner:'<strong>含两个未知数、次数都是1的方程。</strong>两个这样的方程联立，通常有唯一解。',prereq:'一元一次方程',concepts:[['二元一次方程','含两个未知数，次数为1，如x+y=10'],['方程组','两个二元一次方程联立。解是同时满足两个方程的(x,y)值'],['解的情况','唯一解（两直线相交）、无解（平行）、无穷多解（重合）']],questions:[{q:'x+y=5有几个正整数解？',a:'(1,4)(2,3)(3,2)(4,1)，共4个'},{q:'什么叫方程组的解？',a:'同时满足两个方程的(x,y)值'}]},
+{id:'s72c4s2',title:'8.2 消元——解二元一次方程组',oneliner:'<strong>核心就一个字——消。</strong>代入消元或加减消元，干掉一个未知数，变成一元一次方程。',prereq:'二元一次方程概念',concepts:[['代入消元法','从一个方程解出y（或x），代入另一个方程'],['加减消元法','对齐系数后两式相加减，直接消掉一个未知数'],['消元步骤','①选方法②消元③解一元一次方程④回代⑤写解⑥检验']],questions:[{q:'解：x+y=7, x-y=3',a:'两式相加→2x=10→x=5→y=2'},{q:'解：2x+y=8, 3x-2y=5',a:'一式×2→4x+2y=16，加二式→7x=21→x=3→y=2'}]},
+{id:'s72c4s3',title:'8.3 实际问题与二元一次方程组',oneliner:'<strong>两个未知量？设两个未知数列方程组。</strong>鸡兔同笼是最经典的例子。',prereq:'消元法解方程组',concepts:[['列方程组','设两个未知数→找两个等量关系→列方程组→解→检验'],['常见模型','鸡兔同笼、和差倍分、行程追及、工程分配']],questions:[{q:'头35脚94，鸡兔各多少？',a:'设鸡x兔y：x+y=35,2x+4y=94→x=23,y=12'},{q:'A+B=30，A=2B，求A和B',a:'B+2B=30→B=10，A=20'}]}
+]},
+{id:'s72c5',title:'第九章 不等式与不等式组',sections:[
+{id:'s72c5s1',title:'9.1 不等式及其解集',oneliner:'<strong>不是等号，是比较大小。</strong>解集的表示方法：不等式、数轴、集合描述。',prereq:'一元一次方程',concepts:[['不等号','> 大于, < 小于, ≥ 大于等于, ≤ 小于等于, ≠ 不等于'],['不等式性质','①加（减）同一个数，方向不变②乘（除）正数，方向不变③乘（除）负数，<b>方向反过来</b>'],['解集','不等式所有解组成的集合，通常用区间或数轴表示'],['⚠️易错','x>3和x≥3不是一回事。x>3的整数解中最小是4']],questions:[{q:'不等式3x+2>11的解集？',a:'3x>9→x>3'},{q:'-2x+5≤1',a:'-2x≤-4→x≥2（注意：÷(-2)变号！）'}]},
+{id:'s72c5s2',title:'9.2 一元一次不等式的应用',oneliner:'<strong>把生活中的"不少于""不超过"翻译成不等式。</strong>注意解出来后取整。',prereq:'不等式解法',concepts:[['关键词','不少于→≥，不超过→≤，大于→>，小于→<'],['取整','实际问题中要注意解的合理性。32.5个需要取33个'],['解题步骤','审题→设未知数→列不等式→解→写答案']],questions:[{q:'某数加5不小于12，求这个数的范围',a:'x+5≥12→x≥7'},{q:'小明至少考多少分才能均分90？（4次成绩：85,92,88,x）',a:'(85+92+88+x)/4≥90→265+x≥360→x≥95分'}]},
+{id:'s72c5s3',title:'9.3 一元一次不等式组',oneliner:'<strong>多个不等式联立，取公共部分（交集）。</strong>数轴上画区间，叠在一起的就是答案。',prereq:'一元一次不等式',concepts:[['不等式组','几个不等式联立。解组=各不等式解集的交集'],['解集类型','a<x<b（有解）、x>a且x<b无解（空集）、无解（矛盾）'],['数轴法','在数轴上画出所有解集，重叠区域即为解组'],['列不等式组','当问题有多个限制条件时，列不等式组']],questions:[{q:'解：x>3 且 x<8',a:'3 < x < 8'},{q:'解：x>5 且 x≤3',a:'无解（x既要>5又要≤3，矛盾）'}]}
+]},
+{id:'s72c6',title:'第十章 数据的收集、整理与描述',sections:[
+{id:'s72c6s1',title:'10.1 统计调查',oneliner:'<strong>全面调查查全部，抽样调查抽部分。</strong>样本要有代表性，否则结论就歪了。',prereq:'小学数学统计',concepts:[['全面调查','对全体对象调查（如人口普查）。数据准确但成本高'],['抽样调查','抽取部分对象推断总体。关键：样本要有随机性和代表性'],['总体/个体/样本','总体=全部对象，个体=每个对象，样本=抽出来的部分，样本容量=样本数量']],questions:[{q:'抽样100人30人喜欢篮球，全校500人约多少人喜欢？',a:'30/100×500=150人'},{q:'"为省钱只调查一年级"有什么问题？',a:'样本不具代表性，不能反映全校情况'}]},
+{id:'s72c6s2',title:'10.2 直方图与统计图',oneliner:'<strong>条形图比大小，扇形图看比例，折线图看趋势，直方图看分布。</strong>',prereq:'统计调查',concepts:[['条形图','用条的高度表示数量，方便比较不同类别'],['扇形图','用扇形面积表示比例。圆心角=百分比×360°'],['折线图','用线的走势表示变化趋势'],['频数分布直方图','把数据分组，看数据落在各区间的次数。组距=(最大值-最小值)÷组数']],questions:[{q:'扇形图中A占30%，圆心角？',a:'30%×360°=108°'},{q:'最大值95最小值35，分6组，组距？',a:'(95-35)÷6=10'}]}
+]}
+]},
+
+s81:{title:'初二上',map:'三角形 → 全等三角形 → 轴对称 → 整式的乘法与因式分解 → 分式',chapters:[
+{id:'s81c1',title:'第十一章 三角形',sections:[
+{id:'s81c1s1',title:'11.1 与三角形有关的线段',oneliner:'<strong>三条边构成的封闭图形。三边关系、中线、高、角平分线是三角形的基本语言。</strong>',prereq:'角的概念',concepts:[['三边关系','任意两边之和>第三边，任意两边之差<第三边'],['高中线角平分线','高=顶点到对边垂线段；中线=顶点到对边中点；角平分线=平分内角的射线'],['重心','三条中线交于一点。重心到顶点距离=到对边中点距离的2倍'],['稳定性','三边定了形状就唯一确定。四边形没有这个性质']],questions:[{q:'下列哪组能构成三角形？A.2,3,6 B.3,4,5 C.1,1,3',a:'B。2+3=5<6✗，3+4=7>5✓，1+1=2<3✗'},{q:'画三角形三条中线，它们有什么特性？',a:'交于一点（重心）'}]},
+{id:'s81c1s2',title:'11.2 与三角形有关的角',oneliner:'<strong>三个内角和永远是180°。</strong>外角等于不相邻两内角之和，这是几何推导的利器。',prereq:'三角形基本概念',concepts:[['内角和定理','三角形三个内角和=180°。任何三角形都成立'],['外角性质','外角=不相邻两内角之和。外角>任何一个不相邻的内角'],['直角三角形','一个角=90°的叫直角三角形。两锐角互余（和=90°）']],questions:[{q:'三角形两角50°和60°，第三个角？',a:'180°-50°-60°=70°'},{q:'三角形一个外角120°，不相邻一内角50°，另一个内角？',a:'120°-50°=70°'}]},
+{id:'s81c1s3',title:'11.3 多边形及其内角和',oneliner:'<strong>n边形内角和=(n-2)×180°，外角和永远是360°。</strong>从一个顶点画对角线拆分三角形就能推导。',prereq:'三角形内角和',concepts:[['多边形','n条线段首尾连接成的封闭图形。对角线=不相邻顶点连线'],['内角和公式','n边形内角和=(n-2)×180°'],['外角和','任意多边形外角和恒为360°（绕着多边形转一圈）'],['正多边形','各边相等、各角相等的多边形']],questions:[{q:'五边形内角和？',a:'(5-2)×180°=540°'},{q:'正六边形每个内角？',a:'(6-2)×180°÷6=720°÷6=120°'}]}
+]},
+{id:'s81c2',title:'第十二章 全等三角形',sections:[
+{id:'s81c2s1',title:'12.1 全等三角形',oneliner:'<strong>形状大小完全一样，能完全重合。</strong>这是初中几何证明的「万能工具」——证边相等角相等都靠它。',prereq:'三角形',concepts:[['全等定义','能完全重合的两个三角形。对应边相等，对应角相等'],['全等符号','△ABC≌△DEF，注意字母顺序必须对应'],['全等性质','全等三角形周长面积都相等']],questions:[{q:'全等的两个三角形有什么相同？',a:'对应边相等、对应角相等、周长相等、面积相等'},{q:'周长相等的两个三角形一定全等吗？',a:'不一定。比如边长3,4,5和2.5,5,4.5周长都是12但边不同'}]},
+{id:'s81c2s2',title:'12.2 三角形全等的判定',oneliner:'<strong>SSS、SAS、ASA、AAS、HL——五种判定法，唯独没有SSA。</strong>',prereq:'全等概念',concepts:[['SSS','三边对应相等→全等（最稳）'],['SAS','两边及<b>夹角</b>对应相等→全等'],['ASA','两角及<b>夹边</b>对应相等→全等'],['AAS','两角及一角<b>对边</b>对应相等→全等'],['HL','直角三角形：斜边+一直角边对应相等→全等'],['⚠️SSA','两边和一角（非夹角）<b>不能</b>判定全等！'],['证明格式','在△ABC和△DEF中→列条件→∴△ABC≌△DEF(依据)']],questions:[{q:'哪组不能判定全等？A.SSS B.SAS C.SSA D.ASA',a:'C。SSA不能（角不夹边时有两种可能）'},{q:'已知AB=DE，∠A=∠D，还需什么用SAS判定？',a:'AC=DF（∠A的夹边）'}]},
+{id:'s81c2s3',title:'12.3 角的平分线的性质',oneliner:'<strong>角平分线上的点到角两边的距离相等。</strong>逆定理也成立——到角两边距离相等的点在平分线上。',prereq:'全等三角形',concepts:[['角平分线性质','角平分线上的点到角两边距离相等'],['逆定理','到角两边距离相等的点在角平分线上'],['证明思路','角平分线性质通常用HL或AAS证明']],questions:[{q:'角平分线OP上一点P，P到OA距离3，P到OB距离？',a:'也是3（角平分线上点到两边距离相等）'},{q:'如何证明角平分线性质？',a:'作垂线→证两个直角三角形全等(HL)→距离相等'}]}
+]},
+{id:'s81c3',title:'第十三章 轴对称',sections:[
+{id:'s81c3s1',title:'13.1 轴对称',oneliner:'<strong>沿一条线折叠，两边完全重合。</strong>对称轴是垂直平分线——到两端距离相等。',prereq:'全等三角形',concepts:[['轴对称','沿某直线折叠后重合。该直线叫<b>对称轴</b>'],['垂直平分线','过线段中点且垂直。线上任意点到线段两端距离相等'],['轴对称性质','对称点的连线被对称轴垂直平分']],questions:[{q:'线段AB=10cm，垂直平分线上一点P，PA=6，PB=?',a:'6cm（垂直平分线上点到两端距离相等）'},{q:'两个点关于x轴对称，它们的坐标有什么关系？',a:'x坐标相同，y坐标互为相反数'}]},
+{id:'s81c3s2',title:'13.2 画轴对称图形',oneliner:'<strong>找关键点的对称点，连起来就行。</strong>几何画图的基本功。',prereq:'轴对称概念',concepts:[['画法','①找关键点②作垂直③量取等距④连接'],['关于坐标轴对称','关于x轴对称(x,-y)，关于y轴对称(-x,y)']],questions:[{q:'画△ABC关于直线l的对称图形，需要找几个对称点？',a:'3个（三角形的3个顶点）'}]},
+{id:'s81c3s3',title:'13.3 等腰三角形',oneliner:'<strong>两腰相等→两底角相等。</strong>三线合一（顶角平分线=底边中线=底边高）是最强大的工具。',prereq:'轴对称、全等三角形',concepts:[['等腰三角形','两腰相等。等边对等角→两底角相等'],['三线合一','顶角平分线=底边中线=底边高，三线是同一根！'],['等边三角形','三边相等=三角各60°。每条边上的高/中线/平分线都合一'],['判定','两角相等→两腰相等（等角对等边）']],questions:[{q:'等腰三角形顶角80°，底角？',a:'(180°-80°)÷2=50°'},{q:'等腰三角形底边上的高也是什么？',a:'也是底边的中线和顶角的平分线（三线合一）'}]}
+]},
+{id:'s81c4',title:'第十四章 整式的乘法与因式分解',sections:[
+{id:'s81c4s1',title:'14.1 整式的乘法',oneliner:'<strong>单项式乘多项式逐项相乘，多项式乘多项式每一项乘每一项。</strong>幂的运算法则是一切的基础。',prereq:'整式的加减（初一上）',concepts:[['同底数幂乘','aᵐ·aⁿ=aᵐ⁺ⁿ'],['幂的乘方','(aᵐ)ⁿ=aᵐⁿ'],['积的乘方','(ab)ⁿ=aⁿbⁿ'],['单项式乘多项式','逐项相乘。2x(x+3)=2x²+6x'],['多项式乘多项式','每一项乘每一项。(x+2)(x+3)=x²+5x+6']],questions:[{q:'计算：(2x+1)(x-3)',a:'=2x²-6x+x-3=2x²-5x-3'},{q:'a²·a³=? (a²)³=?',a:'a²·a³=a⁵，(a²)³=a⁶'}]},
+{id:'s81c4s2',title:'14.2 乘法公式',oneliner:'<strong>平方差 (a+b)(a-b)=a²-b²，完全平方(a±b)²=a²±2ab+b²。</strong>这两个公式是代数运算的加速器。',prereq:'整式乘法',concepts:[['平方差公式','(a+b)(a-b)=a²-b²。两数和×两数差=平方差'],['完全平方公式','(a+b)²=a²+2ab+b²，(a-b)²=a²-2ab+b²'],['注意','(a+b)²≠a²+b²！中间有2ab'],['公式逆用','a²-b²=(a+b)(a-b)（因式分解时用）']],questions:[{q:'计算：(x+5)(x-5)',a:'=x²-25（平方差公式）'},{q:'计算：(x+3)²',a:'=x²+6x+9（完全平方公式）'}]},
+{id:'s81c4s3',title:'14.3 因式分解',oneliner:'<strong>把一个多项式写成乘积形式。</strong>三种方法：提公因式、套公式、十字相乘。',prereq:'整式乘法、乘法公式',concepts:[['定义','把一个多项式化为几个整式的乘积'],['提公因式法','先找各项的公因式提出来。如3x²+6x=3x(x+2)'],['公式法','套平方差/完全平方倒推。x²-9=(x+3)(x-3)'],['十字相乘法','x²+(a+b)x+ab=(x+a)(x+b)。解二次方程的关键'],['步骤','一提（公因式）→二代（套公式）→三十字（相乘）']],questions:[{q:'因式分解：x²-9',a:'=(x+3)(x-3)（平方差）'},{q:'因式分解：x²+7x+12',a:'找和=7积=12→3和4。=(x+3)(x+4)'}]}
+]},
+{id:'s81c5',title:'第十五章 分式',sections:[
+{id:'s81c5s1',title:'15.1 分式的基本概念',oneliner:'<strong>分母含字母、分母≠0。</strong>分式的基本性质：分子分母同乘除，值不变。',prereq:'因式分解',concepts:[['分式定义','A/B，B含字母且B≠0'],['有意义条件','分母≠0。x=3时分式(x+2)/(x-3)无意义'],['基本性质','分子分母同乘（除非零），分式值不变'],['约分/通分','约分=分子分母同除公因式；通分=化成分母相同的分式']],questions:[{q:'分式(x+2)/(x-3)何时无意义？何时值为0？',a:'x=3无意义；x=-2时值为0'},{q:'化简：(x²-4)/(x+2)',a:'=(x+2)(x-2)/(x+2)=x-2（x≠-2）'}]},
+{id:'s81c5s2',title:'15.2 分式的运算',oneliner:'<strong>加减先通分，乘法分子×分子分母×分母，除法乘倒数。</strong>规则和分数一模一样。',prereq:'分式基本概念',concepts:[['乘法','分子×分子，分母×分母。约分化简'],['除法','除以一个分式=乘以它的倒数'],['加减法','先通分（找最简公分母）再加减分子'],['混合运算','先乘除后加减，有括号先算括号']],questions:[{q:'计算：1/x + 2/x',a:'=3/x（分母相同直接加分子）'},{q:'计算：(2x²/y)·(3y/4x)',a:'=(2x²·3y)/(y·4x)=(6x²y)/(4xy)=(3x)/(2)'}]},
+{id:'s81c5s3',title:'15.3 分式方程',oneliner:'<strong>去分母化为整式方程，解完必须验根！</strong>增根=去分母后引入的不满足原方程的根。',prereq:'分式运算、一元一次方程',concepts:[['解法','去分母→解整式方程→验根（去掉使分母为0的增根）'],['增根','去分母后多出来的根，检验发现分母=0就要舍去'],['步骤','①去分母②解方程③检验④作答'],['注意','解分式方程必须写检验过程']],questions:[{q:'解：2/x=1/(x-1)',a:'交叉相乘→2(x-1)=x→x=2。检验分母≠0✓'},{q:'什么叫增根？',a:'满足去分母后的整式方程但不满足原分式方程的根'}]}
+]}
+]},
+
+s82:{title:'初二下',map:'二次根式 → 勾股定理 → 平行四边形 → 一次函数 → 数据的分析',chapters:[
+{id:'s82c1',title:'第十六章 二次根式',sections:[
+{id:'s82c1s1',title:'16.1 二次根式的概念与性质',oneliner:'<strong>√a 表示 a 的算术平方根（a≥0）。</strong>(√a)²=a，但 √(a²)=|a|，这里有坑。',prereq:'实数（初一下第六章）',concepts:[['定义','√a是a的算术平方根，a≥0'],['(√a)²=a','平方和开方互逆（a≥0）'],['√(a²)=|a|','注意绝对值！√((-3)²)=|−3|=3，不是−3'],['双重非负性','a≥0 且 √a≥0']],questions:[{q:'√(x-1)何时有意义？',a:'x-1≥0→x≥1'},{q:'√((-5)²)=?',a:'=|-5|=5'}]},
+{id:'s82c1s2',title:'16.2 二次根式的乘除',oneliner:'<strong>√a·√b=√(ab)，√a/√b=√(a/b)。</strong>先化简再运算，化到最简为止。',prereq:'二次根式概念',concepts:[['乘法','√a·√b=√(ab)（a,b≥0）'],['除法','√a/√b=√(a/b)（a≥0,b>0）'],['最简二次根式','被开方数不含分母、不含能开尽方的因数'],['分母有理化','把分母的根号去掉。1/√2=√2/2']],questions:[{q:'化简：√50',a:'=√(25×2)=5√2'},{q:'计算：√12÷√3',a:'=√(12/3)=√4=2'}]},
+{id:'s82c1s3',title:'16.3 二次根式的加减',oneliner:'<strong>同类二次根式才能合并，就像同类项一样。</strong>先化简每个根式再合并。',prereq:'二次根式乘除',concepts:[['同类二次根式','化简后被开方数相同的根式。√8和√2化简后=2√2和√2是同类'],['加减法','先化简→合并同类根式（系数加减）'],['混合运算','和整式混合运算一样，先乘除后加减，有括号先算']],questions:[{q:'计算：√12+√27',a:'=2√3+3√3=5√3'},{q:'√8+√2=?',a:'=2√2+√2=3√2'}]}
+]},
+{id:'s82c2',title:'第十七章 勾股定理',sections:[
+{id:'s82c2s1',title:'17.1 勾股定理',oneliner:'<strong>直角三角形中，a²+b²=c²。</strong>几千年历史的定理，至今是几何计算最实用的工具。',prereq:'二次根式、三角形',concepts:[['勾股定理','Rt△中，两直角边平方和=斜边平方。a²+b²=c²'],['勾股数','满足a²+b²=c²的正整数。如(3,4,5)(5,12,13)(7,24,25)'],['应用','已知两边求第三边；判断是否为直角；实际测距'],['特殊三角形','30°Rt△：30°对边=斜边一半。等腰Rt△：斜边=直角边×√2']],questions:[{q:'直角边6和8，斜边？',a:'6²+8²=36+64=100→斜边=10'},{q:'30°Rt△斜边10，最短直角边？',a:'10÷2=5（30°对边=斜边一半）'}]},
+{id:'s82c2s2',title:'17.2 勾股定理的逆定理',oneliner:'<strong>三边满足a²+b²=c²，必是直角三角形。</strong>判定直角不用量角器，算一下就知道了。',prereq:'勾股定理',concepts:[['逆定理','若三角形三边满足a²+b²=c²，则该三角形是直角三角形（c边所对角是直角）'],['判定方法','计算两短边的平方和，看是否等于最长边平方']],questions:[{q:'三边5,12,13能构成直角三角形吗？',a:'5²+12²=25+144=169=13²✓，是直角三角形'},{q:'三边4,5,6是直角三角形吗？',a:'4²+5²=16+25=41≠36=6²，不是'}]}
+]},
+{id:'s82c3',title:'第十八章 平行四边形',sections:[
+{id:'s82c3s1',title:'18.1 平行四边形',oneliner:'<strong>两组对边分别平行。</strong>对边相等、对角相等、对角线互相平分。这是四边形家族的根源。',prereq:'全等三角形、平行线',concepts:[['定义','两组对边分别平行的四边形'],['性质','对边平行且相等、对角相等、邻角互补、对角线互相平分'],['判定','①两组对边分别平行②两组对边分别相等③一组对边平行且相等④对角线互相平分'],['三角形中位线','连接两边中点→平行于第三边且=第三边一半。超级常用']],questions:[{q:'平行四边形一个角70°，其余三角？',a:'对角70°，邻角110°。四个角：70°,110°,70°,110°'},{q:'三角形两腰中点连线叫什么？和底边什么关系？',a:'中位线。平行于底边且=底边一半'}]},
+{id:'s82c3s2',title:'18.2 特殊的平行四边形',oneliner:'<strong>矩形=直角+平行四边形，菱形=等边+平行四边形，正方形=矩形∩菱形。</strong>它们的关系像家族谱。',prereq:'平行四边形',concepts:[['矩形','一个角是直角的▱。对角线相等。四个角都90°'],['菱形','一组邻边相等的▱。对角线互相垂直平分。四边相等'],['正方形','同时是矩形和菱形。四边相等、四角90°、对角线相等且垂直平分'],['关系图','平行四边形⊃矩形、菱形⊃正方形']],questions:[{q:'矩形对角线有什么特点？',a:'相等且互相平分'},{q:'菱形边长5，一对角线6，另一对角线？',a:'垂直平分→半对角线=3→另一半=√(5²-3²)=4→对角线=8'}]}
+]},
+{id:'s82c4',title:'第十九章 一次函数',sections:[
+{id:'s82c4s1',title:'19.1 函数',oneliner:'<strong>对于x的每个值，y有唯一确定的值对应。</strong>y是x的函数。这是从"计算"到"关系"的思维升级。',prereq:'平面直角坐标系',concepts:[['函数','在一个变化过程中，对于x的每一个确定值，y有唯一值与之对应'],['自变量/因变量','x是自变量（输入），y是因变量（输出）'],['函数值','当x=a时，计算出的y值'],['三种表示法','解析式、列表法、图像法']],questions:[{q:'y²=x，y是x的函数吗？',a:'不是。x=4时y可以是2或-2，不唯一'},{q:'圆的面积S=πr²，S是r的函数吗？',a:'是。每个r对应唯一S'}]},
+{id:'s82c4s2',title:'19.2 一次函数',oneliner:'<strong>y=kx+b，画出来是一条直线。</strong>k是斜率（陡不陡），b是截距（在哪穿过y轴）。',prereq:'函数概念、坐标系',concepts:[['正比例函数','y=kx(k≠0)，过原点的直线。k>0上升，k<0下降'],['一次函数','y=kx+b(k≠0)。k=斜率，b=y轴截距(0,b)'],['k的作用','k>0：y随x增大而增大（上坡）；k<0：y随x增大而减小（下坡）；|k|越大越陡'],['b的作用','与y轴交点。b>0交上方，b<0交下方。（0,b）是必过点'],['待定系数法','已知两点：设y=kx+b，代入→解k和b']],questions:[{q:'过(0,3)(2,7)的一次函数解析式',a:'b=3,2k+3=7→k=2。y=2x+3'},{q:'y=-x+4和y=x的交点？',a:'-x+4=x→2x=4→x=2,y=2。交点(2,2)'}]}
+]},
+{id:'s82c5',title:'第二十章 数据的分析',sections:[
+{id:'s82c5s1',title:'20.1 数据的集中趋势',oneliner:'<strong>平均数看中心，中位数看位置，众数看频率。</strong>不同指标各有各的用处。',prereq:'数据的收集（初一下第十章）',concepts:[['平均数','所有数据之和÷数据个数'],['加权平均数','各数据乘权重后求和÷权重和'],['中位数','排序后最中间的数（偶数个取中间两数平均）'],['众数','出现次数最多的数。可以有一个或多个']],questions:[{q:'1,4,7,7,10的中位数？',a:'排序后中间是7'},{q:'5个数据：3,7,5,7,8的平均数和众数',a:'平均数=6，众数=7（出现2次）'}]},
+{id:'s82c5s2',title:'20.2 数据的波动程度',oneliner:'<strong>方差和标准差衡量数据稳不稳定。</strong>选人参赛不能只看平均分，还得看谁波动小。',prereq:'数据的集中趋势',concepts:[['极差','最大值-最小值。最简单但粗糙'],['方差','每个数据与平均数之差的平方和÷数据个数。越大越不稳'],['标准差','方差的算术平方根，和原数据单位一致。更直观'],['应用','平均数相同比方差。方差小的更稳定']],questions:[{q:'两组数据平均数相同，怎么选？',a:'计算方差。方差小的更稳定'},{q:'2,4,4,6,8的极差？',a:'8-2=6'}]}
+]}
+]},
+
+s91:{title:'初三上',map:'一元二次方程 → 二次函数 → 旋转 → 圆 → 概率初步',chapters:[
+{id:'s91c1',title:'第二十一章 一元二次方程',sections:[
+{id:'s91c1s1',title:'21.1 一元二次方程',oneliner:'<strong>含x²的方程，一般形式ax²+bx+c=0（a≠0）。</strong>解就是抛物线与x轴的交点。',prereq:'整式、因式分解',concepts:[['定义','含一个未知数，最高次数为2的整式方程。ax²+bx+c=0(a≠0)'],['解/根','使方程成立的x值。二次方程最多两个解'],['降次思想','把二次降为一次来解——配方法、因式分解法都是这个思路']],questions:[{q:'x²=4的解是？',a:'x=±2（二次方程有两个解）'},{q:'方程x²+1=0有实数解吗？',a:'没有。x²≥0所以x²+1≥1>0，无解'}]},
+{id:'s91c1s2',title:'21.2 解一元二次方程',oneliner:'<strong>三条路：配方、公式、因式分解。</strong>公式法是万能兜底的，但十字相乘法最快。',prereq:'因式分解',concepts:[['配方法','通过变形变成(x+m)²=n，再开平方'],['求根公式','x=[-b±√(b²-4ac)]/(2a)'],['判别式Δ','Δ=b²-4ac。Δ>0两个不等实根；Δ=0两个相等实根；Δ<0无实根'],['因式分解法','最快的解法。把二次式分解为两个一次式乘积'],['根与系数','x₁+x₂=-b/a，x₁·x₂=c/a（韦达定理）']],questions:[{q:'解：x²-5x+6=0',a:'因式分解(x-2)(x-3)=0→x=2或3'},{q:'2x²-4x-1=0用求根公式',a:'x=[4±√(16+8)]/4=[4±√24]/4=1±√6/2'},{q:'x²+x-6=0两根之和与积？',a:'和=-1，积=-6（韦达定理）'}]},
+{id:'s91c1s3',title:'21.3 实际问题与一元二次方程',oneliner:'<strong>增长率、面积、利润——二次方程是应用题里的重头戏。</strong>解出来记得检验合理性。',prereq:'解一元二次方程',concepts:[['增长率模型','a(1±x)ⁿ=b。增长率>1，下降率<1'],['面积问题','矩形面积=长×宽。修路、建花园常用二次方程'],['利润问题','利润=(售价-成本)×销量。求最大利润→二次函数'],['检验','解必须符合实际意义（长度>0、人数为正整数等）']],questions:[{q:'某商品连续两次降价20%，原价100，现价？',a:'100×(1-0.2)²=100×0.64=64元'},{q:'长方形长比宽多2，面积48，求长宽',a:'设宽x：x(x+2)=48→x²+2x-48=0→(x+8)(x-6)=0→x=6，长=8'}]}
+]},
+{id:'s91c2',title:'第二十二章 二次函数',sections:[
+{id:'s91c2s1',title:'22.1 二次函数的图象和性质',oneliner:'<strong>y=ax²+bx+c，画出来是一条抛物线。</strong>a>0开口向上∪，a<0开口向下∩。顶点是最高/最低点。',prereq:'一元二次方程、一次函数',concepts:[['一般式','y=ax²+bx+c。|a|越大开口越窄'],['顶点式','y=a(x-h)²+k，顶点(h,k)。对称轴x=h'],['对称轴','x=-b/(2a)。抛物线关于此线对称'],['顶点坐标','(-b/(2a), (4ac-b²)/(4a))→函数的最大/最小值'],['平移','y=(x-h)²+k就是把y=x²平移→右h，上k'],['开口','a>0开口向上∪（有最小值），a<0开口向下∩（有最大值）']],questions:[{q:'y=x²-4x+3的顶点坐标',a:'配方y=(x-2)²-1，顶点(2,-1)'},{q:'y=2(x-1)²+3的对称轴和最小值',a:'对称轴x=1，最小值=3（x=1时）'}]},
+{id:'s91c2s2',title:'22.2 二次函数与一元二次方程',oneliner:'<strong>抛物线y=ax²+bx+c与x轴的交点，就是方程ax²+bx+c=0的根。</strong>Δ决定有几个交点。',prereq:'二次函数图像、一元二次方程',concepts:[['与x轴交点','解ax²+bx+c=0。Δ>0有2个交点，Δ=0相切（1个），Δ<0无交点'],['不等式','利用图像判断ax²+bx+c>0在哪些区间成立']],questions:[{q:'y=-x²+2x+3与x轴的交点',a:'解x²-2x-3=0→(x-3)(x+1)=0→(3,0)和(-1,0)'},{q:'什么时候二次函数值恒为正？',a:'a>0且Δ<0，抛物线全在x轴上方'}]}
+]},
+{id:'s91c3',title:'第二十三章 旋转',sections:[
+{id:'s91c3s1',title:'23.1 图形的旋转',oneliner:'<strong>图形绕一个点转一定角度，形状大小不变。</strong>旋转是全等变换——只变方向不变形。',prereq:'全等三角形',concepts:[['旋转三要素','旋转中心、旋转方向（顺时针/逆时针）、旋转角度'],['旋转性质','对应点到中心距离相等、对应点与中心夹角=旋转角、图形全等'],['坐标变换','(x,y)绕原点逆时针转90°→(-y,x)']],questions:[{q:'点A(2,0)绕原点逆时针转90°后坐标？',a:'(0,2)'},{q:'旋转改变图形大小吗？',a:'不改变。旋转是全等变换'}]},
+{id:'s91c3s2',title:'23.2 中心对称',oneliner:'<strong>绕一点转180°后重合，叫中心对称。</strong>平行四边形、圆是典型的中心对称图形。',prereq:'旋转',concepts:[['中心对称','图形绕某点旋转180°后与自身重合。该点叫对称中心'],['中心对称图形','对称中心平分连接对应点的线段'],['关于原点对称','(x,y)关于原点对称→(-x,-y)']],questions:[{q:'正方形是中心对称图形吗？',a:'是。绕中心转90°或180°都重合'},{q:'点(3,-4)关于原点对称的坐标？',a:'(-3,4)'}]}
+]},
+{id:'s91c4',title:'第二十四章 圆',sections:[
+{id:'s91c4s1',title:'24.1 圆的有关性质',oneliner:'<strong>到定点距离等于定长的点的集合。</strong>垂径定理和圆周角定理是圆的基石。',prereq:'三角形、勾股定理',concepts:[['基本概念','圆心O、半径r、直径d=2r。弦、弧、圆心角、圆周角'],['垂径定理','垂直于弦的直径平分这条弦及弦所对的弧——解题神器'],['等对等','同圆中：圆心角相等⇔弧相等⇔弦相等⇔弦心距相等'],['圆周角定理','同弧所对圆周角=圆心角的一半。直径所对圆周角=90°'],['内接四边形','圆内接四边形对角互补（和=180°）']],questions:[{q:'直径所对圆周角？',a:'90°（半圆上的圆周角是直角）'},{q:'半径5弦长8，圆心到弦距离？',a:'垂径定理：d=√(5²-4²)=3'}]},
+{id:'s91c4s2',title:'24.2 点和圆、直线和圆的位置关系',oneliner:'<strong>d<r相交，d=r相切，d>r相离。</strong>切线垂直于过切点的半径——只用这一条就能推一堆。',prereq:'圆的基本性质',concepts:[['点和圆','d<r在圆内，d=r在圆上，d>r在圆外'],['直线和圆','d<r相交(2交点)，d=r相切(1交点)，d>r相离(0交点)'],['切线性质','切线⊥过切点的半径'],['切线长定理','圆外一点引两条切线→两条切线长相等']],questions:[{q:'圆心到直线距离=半径时，什么关系？',a:'相切。直线与圆只有一个交点'},{q:'从圆外一点引两条切线，它们什么关系？',a:'长度相等（切线长定理）'}]},
+{id:'s91c4s3',title:'24.3 正多边形与圆的相关计算',oneliner:'<strong>正多边形的外接圆半径r，扇形弧长l=nπr/180，面积S=nπr²/360。</strong>',prereq:'圆的基本性质',concepts:[['正多边形与圆','正多边形都有一个外接圆和内切圆，两圆同心'],['弧长公式','l=nπr/180（n=圆心角度数）'],['扇形面积','S=nπr²/360=lr/2（l=弧长）'],['圆锥侧面积','S侧=πrl（r=底面半径，l=母线长）']],questions:[{q:'扇形半径6，圆心角60°，面积？',a:'S=60π·36/360=6π'},{q:'弧长3π，半径5，圆心角？',a:'3π=nπ·5/180→n=108°'}]}
+]},
+{id:'s91c5',title:'第二十五章 概率初步',sections:[
+{id:'s91c5s1',title:'25.1 随机事件与概率',oneliner:'<strong>概率=事件数÷总数。</strong>必然事件概率=1，不可能事件=0，随机事件在0到1之间。',prereq:'数据统计',concepts:[['确定事件','必然事件P=1，不可能事件P=0'],['随机事件','可能发生也可能不发生，0<P<1'],['古典概型','所有结果等可能，P=所求结果数÷总结果数']],questions:[{q:'掷骰子点数是偶数的概率？',a:'偶数2,4,6共3个→3/6=1/2'},{q:'袋中3红2白，摸出红球的概率？',a:'3/(3+2)=3/5'}]},
+{id:'s91c5s2',title:'25.2 用列举法求概率',oneliner:'<strong>把可能结果全列出来。</strong>树状图适合多步骤，列表法适合两维。',prereq:'概率基本概念',concepts:[['列表法','把两个因素的组合列成表格。适合双因素'],['树状图','把每一步分支画出来。适合多步骤'],['注意','列举要不重不漏。两枚硬币：正正、正反、反正、反反（共4种）']],questions:[{q:'两枚硬币同时抛，一正一反概率？',a:'共4种：正正、正反、反正、反反。一正一反有2种→2/4=1/2'},{q:'从3个不同球中摸2个，共有几种结果？',a:'3×2÷2=3种（组合）'}]},
+{id:'s91c5s3',title:'25.3 用频率估计概率',oneliner:'<strong>实验次数越多，频率越接近概率。</strong>当无法直接计算时，用大量实验来逼近。',prereq:'概率计算',concepts:[['频率','某结果出现的次数÷试验总次数'],['大数定律','大量重复试验时，频率稳定在概率附近'],['应用','抽检产品合格率、天气预报等']],questions:[{q:'抛硬币1000次，正面出现520次。正面概率大约？',a:'520/1000=0.52≈0.5。样本量大时接近理论值0.5'},{q:'频率和概率的区别？',a:'概率是理论值，频率是实验结果。实验越多频率越接近概率'}]}
+]}
+]},
+
+s92:{title:'初三下',map:'反比例函数 → 相似 → 锐角三角函数 → 投影与视图',chapters:[
+{id:'s92c1',title:'第二十六章 反比例函数',sections:[
+{id:'s92c1s1',title:'26.1 反比例函数',oneliner:'<strong>y=k/x（k≠0），画出来是双曲线。</strong>x越大y越小，x和y的乘积永远是k——和一次函数完全不同。',prereq:'一次函数',concepts:[['定义','y=k/x（k≠0，x≠0）。图像是<b>双曲线</b>'],['k>0','图像在第一、三象限。y随x增大而减小'],['k<0','图像在第二、四象限。y随x增大而增大'],['对称性','关于原点对称（中心对称），关于y=±x对称'],['|k|的几何意义','图像上任一点到坐标轴的矩形面积=|k|'],['与一次函数交点','联立解方程组。可能有0/1/2个交点']],questions:[{q:'y=6/x，x=3时y=?',a:'y=6/3=2'},{q:'图像上一点(2,3)，k=?',a:'k=xy=2×3=6'}]},
+{id:'s92c1s2',title:'26.2 实际问题与反比例函数',oneliner:'<strong>路程固定时速度和时间成反比，电压固定时电流和电阻成反比。</strong>生活中有大量反比例关系。',prereq:'反比例函数概念',concepts:[['反比例模型','xy=k（常数）。如路程=速度×时间，电压=电流×电阻'],['应用题','设解析式→代入已知点确定k→计算求解']],questions:[{q:'路程120km，速度v和时间t的关系？',a:'vt=120→v=120/t（反比例函数）'},{q:'矩形面积24，宽x长y，y和x的关系？',a:'xy=24→y=24/x（反比例函数）'}]}
+]},
+{id:'s92c2',title:'第二十七章 相似',sections:[
+{id:'s92c2s1',title:'27.1 图形的相似',oneliner:'<strong>形状相同、大小不同。</strong>对应角相等，对应边成比例。相似比k=对应边之比。',prereq:'全等三角形、平行线',concepts:[['相似','对应角相等，对应边成比例的两个图形'],['相似比k','对应边之比。k>1放大，k<1缩小，k=1全等'],['多边形相似','边数相同，各角对应相等，各边对应成比例'],['面积比','相似图形的面积比=k²']],questions:[{q:'相似比1:2的两个正方形，面积比？',a:'1²:2²=1:4'},{q:'两个正方形一定相似吗？',a:'是。所有正方形对应角都是90°，对应边成比例'}]},
+{id:'s92c2s2',title:'27.2 相似三角形',oneliner:'<strong>相似三角形的判定比全等简单——两角相等就够了。</strong>相似是测量、比例、放缩的核心工具。',prereq:'相似概念、平行线',concepts:[['判定方法','①两角对应相等（AA）②两边成比例且夹角相等③三边成比例'],['平行线分线段','一束平行线截两条直线，对应线段成比例。这是相似的最常见来源'],['性质','对应边成比例、对应高成比例、周长比=相似比'],['应用','测量高度（标杆、影子）、设计缩放图']],questions:[{q:'两个等边三角形一定相似吗？',a:'是。每个角都是60°，两角相等即相似'},{q:'三角形三边3,4,5和6,8,10相似吗？',a:'相似。三边比都是1:2'}]},
+{id:'s92c2s3',title:'27.3 位似',oneliner:'<strong>特殊的相似——对应点连线交于同一点。</strong>用来画放大/缩小图，投影仪的原理。',prereq:'相似三角形',concepts:[['位似定义','不仅是相似，而且对应点连线交于一点（位似中心）'],['位似比','位似图形的相似比。正号同侧，负号异侧'],['与相似区别','所有的位似图形都是相似的，但相似不一定是位似']],questions:[{q:'位似中心有什么特点？',a:'所有对应点的连线都经过位似中心'},{q:'相似三角形一定是位似吗？',a:'不一定。对应点连线不一定交于同一点'}]}
+]},
+{id:'s92c3',title:'第二十八章 锐角三角函数',sections:[
+{id:'s92c3s1',title:'28.1 锐角三角函数',oneliner:'<strong>sin A=对边/斜边，cos A=邻边/斜边，tan A=对边/邻边。</strong>从几何到三角的桥梁。',prereq:'相似、勾股定理',concepts:[['sin A','对边/斜边。0<sin A<1（锐角时）'],['cos A','邻边/斜边。0<cos A<1'],['tan A','对边/邻边。可以大于1'],['特殊角','30°:sin=1/2,cos=√3/2,tan=√3/3。45°:sin=cos=√2/2,tan=1。60°:sin=√3/2,cos=1/2,tan=√3'],['互余关系','sin(90°-A)=cos A，cos(90°-A)=sin A']],questions:[{q:'30°Rt△，斜边10，sin30°=? 对边=?',a:'sin30°=1/2，对边=10×1/2=5'},{q:'sin45°=cos45°=?',a:'√2/2≈0.707'}]},
+{id:'s92c3s2',title:'28.2 解直角三角形及其应用',oneliner:'<strong>已知一边一角或两边，就能求出其他所有边和角。</strong>测高、航海、工程都靠它。',prereq:'锐角三角函数',concepts:[['解直角三角形','利用三角函数和勾股定理，由已知元素求未知元素'],['仰角/俯角','视线在水平线上方叫仰角，下方叫俯角'],['坡度','坡度=垂直高度/水平宽度=tan α'],['方向角','航海和测量中用方位角表示方向']],questions:[{q:'tanA=3/4，对边6，邻边？',a:'6/邻边=3/4→邻边=8'},{q:'建筑高30m，在100m远处仰角？',a:'tanθ=30/100=0.3。θ≈16.7°（用计算器）'}]}
+]},
+{id:'s92c4',title:'第二十九章 投影与视图',sections:[
+{id:'s92c4s1',title:'29.1 投影',oneliner:'<strong>光线照射物体产生影子。</strong>平行投影（阳光）和中心投影（灯光），两种不同的影子规则。',prereq:'几何图形、相似',concepts:[['投影','光线照射物体在平面上形成的影子'],['平行投影','平行光线→投影。阳光下的影子，对应线段成比例'],['中心投影','从一点发出的光线→投影。灯光下的影子，位似关系'],['正投影','投影线垂直于投影面。最简单的投影']],questions:[{q:'阳光和灯光产生的投影有什么不同？',a:'阳光=平行投影（对应线段成比例），灯光=中心投影（位似）'},{q:'正午阳光下人的影子最长还是最短？',a:'最短（太阳在头顶正上方）'}]},
+{id:'s92c4s2',title:'29.2 三视图',oneliner:'<strong>从正面、左面、上面看物体，画出三个方向的投影图。</strong>长对正、高平齐、宽相等。',prereq:'投影',concepts:[['三视图','正视图（前面看）、俯视图（上面看）、左视图（左面看）'],['画法规则','长对正（正面和俯视长度一致）、高平齐（正面和左视高度一致）、宽相等（俯视和左视宽度一致）'],['由三视图还原','从三个方向的轮廓推断立体图形'],['常见立体','圆柱：正/侧→长方形，俯→圆。圆锥：正/侧→三角形，俯→圆+点。球：三视图都是圆']],questions:[{q:'圆柱的三视图各是什么？',a:'正视图长方形，侧视图长方形，俯视图圆'},{q:'球的三视图？',a:'三个都是圆（直径相同）'}]}
+]}
+]}
+};
+
+// ==================== RENDER ====================
+let currentSem = 's71';
+let activeSection = null;
+const checked = JSON.parse(localStorage.getItem('math_sec_checklist') || '{}');
+
+function countTotalDone() {
+  let total = 0, done = 0;
+  Object.values(DATA).forEach(s => s.chapters.forEach(ch => ch.sections.forEach(sec => {
+    total++;
+    if (checked[sec.id]) done++;
+  })));
+  return { total, done };
+}
+
+function updateProgress() {
+  const { total, done } = countTotalDone();
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${done} / ${total} 节已学`;
+}
+
+function buildSemNav() {
+  const nav = document.getElementById('semNav');
+  const keys = ['s71','s72','s81','s82','s91','s92'];
+  nav.innerHTML = keys.map(k => {
+    const d = DATA[k];
+    const cls = k === currentSem ? 'sem-btn active' : 'sem-btn';
+    return `<button class="${cls}" data-sem="${k}">${d.title}</button>`;
+  }).join('');
+}
+
+function buildTree() {
+  const tree = document.getElementById('tree');
+  const d = DATA[currentSem];
+  let html = '';
+  d.chapters.forEach(ch => {
+    html += `<div class="chapter-node">
+      <button class="chapter-toggle" data-ch="${ch.id}" onclick="toggleChapter(this)">
+        <span class="arrow">▶</span>
+        <span class="ch-icon">📖</span>${ch.title}
+      </button>
+      <div class="sections-list" id="list-${ch.id}">`;
+    ch.sections.forEach(sec => {
+      const cls = activeSection === sec.id ? 'section-link active' : 'section-link';
+      html += `<a class="${cls}" data-sid="${sec.id}" onclick="scrollToSection('${sec.id}')">${sec.title}</a>`;
+    });
+    html += `</div></div>`;
+  });
+  tree.innerHTML = html;
+}
+
+function toggleChapter(btn) {
+  const chId = btn.dataset.ch;
+  const list = document.getElementById('list-' + chId);
+  const arrow = btn.querySelector('.arrow');
+  list.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+function scrollToSection(sid) {
+  activeSection = sid;
+  buildTree();
+  const el = document.getElementById(sid);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList.add('highlight');
+    setTimeout(() => el.classList.remove('highlight'), 1500);
+  }
+}
+
+function toggleAnswer(btn) {
+  const answer = btn.nextElementSibling;
+  const open = answer.classList.contains('show');
+  answer.classList.toggle('show');
+  btn.classList.toggle('open');
+  btn.innerHTML = open ? '▶ 查看答案' : '▼ 隐藏答案';
+}
+
+function toggleSecCheck(sid, cb) {
+  checked[sid] = cb.checked;
+  localStorage.setItem('math_sec_checklist', JSON.stringify(checked));
+  updateProgress();
+}
+
+function renderMain() {
+  const main = document.getElementById('main');
+  const d = DATA[currentSem];
+  let html = `<div class="semester-header"><h2>${d.title}</h2><div class="map">📌 ${d.map}</div></div>`;
+
+  d.chapters.forEach(ch => {
+    html += `<div class="chapter-block">
+      <div class="chapter-block-header">
+        <h3>${ch.title}</h3>
+        <span class="ch-num">${ch.sections.length} 节</span>
+      </div>`;
+
+    ch.sections.forEach(sec => {
+      const done = checked[sec.id];
+      html += `<div class="section-card" id="${sec.id}">
+        <div class="section-card-top">
+          <h4>${sec.title}</h4>
+          <span class="tag">📖 概念</span>
+        </div>
+        <div class="one-liner">💡 ${sec.oneliner}</div>
+        <table class="concept-table"><thead><tr><th>概念</th><th>大白话</th></tr></thead><tbody>`;
+      sec.concepts.forEach(c => {
+        html += `<tr><td>${c[0]}</td><td>${c[1]}</td></tr>`;
+      });
+      html += `</tbody></table>`;
+      html += `<div class="prereq">📌 前置知识：${sec.prereq}</div>`;
+
+      if (sec.questions && sec.questions.length) {
+        html += `<div class="questions"><h5>✅ 验证题</h5>`;
+        sec.questions.forEach((q, qi) => {
+          html += `<div class="question-item">
+            <div class="q">${qi + 1}. ${q.q}</div>
+            <button class="a-toggle" onclick="toggleAnswer(this)">▶ 查看答案</button>
+            <div class="answer">${q.a}</div>
+          </div>`;
+        });
+        html += `</div>`;
+      }
+
+      html += `<div class="section-footer">
+        <label><input type="checkbox" ${done ? 'checked' : ''} onchange="toggleSecCheck('${sec.id}', this)"> 这节我学会了</label>
+      </div></div>`;
+    });
+    html += `</div>`;
+  });
+
+  main.innerHTML = html;
+}
+
+function switchSemester(key) {
+  currentSem = key;
+  activeSection = null;
+  buildSemNav();
+  buildTree();
+  renderMain();
+  updateProgress();
+  // Auto-expand all chapters
+  document.querySelectorAll('.chapter-toggle').forEach(btn => {
+    toggleChapter(btn);
+  });
+}
+
+document.getElementById('semNav').addEventListener('click', e => {
+  const btn = e.target.closest('.sem-btn');
+  if (btn) switchSemester(btn.dataset.sem);
+});
+
+buildSemNav();
+buildTree();
+renderMain();
+updateProgress();
+// Auto-expand chapters on load
+document.querySelectorAll('.chapter-toggle').forEach(btn => toggleChapter(btn));
+</script>
+</body>
+</html>
